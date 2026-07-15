@@ -1,0 +1,20 @@
+{
+  "name": "Merca Fácil",
+  "short_name": "Merca Fácil",
+  "description": "Lista semanal de Mercamadrid para Horno, Parador y Patio.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f5f6f1",
+  "theme_color": "#173f35",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#173f35">
+  <meta name="description" content="Lista semanal de Mercamadrid para Horno, Parador y Patio.">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="styles.css">
+  <title>Merca Fácil</title>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">M</div>
+      <div>
+        <h1>Merca Fácil</h1>
+        <p id="save-status">Guardado en este dispositivo</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="install-button" class="icon-button install-button" type="button" hidden aria-label="Instalar aplicación">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 19h14"/></svg>
+      </button>
+      <button id="share-button" class="icon-button" type="button" aria-label="Compartir lista">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5"/></svg>
+      </button>
+      <button id="manage-button" class="icon-button" type="button" aria-label="Más opciones">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="summary" aria-labelledby="summary-title">
+      <div>
+        <p id="summary-title" class="eyebrow">Esta semana</p>
+        <p class="summary-copy"><strong id="pending-count">0</strong> por pedir · <span id="ordered-count">0</span> <span id="ordered-label">pedidos</span></p>
+      </div>
+      <div class="progress" role="progressbar" aria-label="Progreso del pedido" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <span id="progress-bar"></span>
+      </div>
+    </section>
+
+    <nav id="restaurant-tabs" class="restaurant-tabs" aria-label="Restaurantes"></nav>
+
+    <section class="tools" aria-label="Buscar y filtrar">
+      <label class="search-box" for="search-input">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
+        <input id="search-input" type="search" placeholder="Buscar producto…" autocomplete="off">
+        <button id="clear-search" type="button" aria-label="Borrar búsqueda" hidden>×</button>
+      </label>
+      <select id="category-filter" aria-label="Filtrar por categoría">
+        <option value="all">Todas las categorías</option>
+      </select>
+    </section>
+
+    <nav id="view-tabs" class="view-tabs" aria-label="Estado de la lista">
+      <button type="button" data-view="pending" aria-pressed="true">Por pedir</button>
+      <button type="button" data-view="ordered" aria-pressed="false">Pedidos</button>
+      <button type="button" data-view="catalog" aria-pressed="false">Catálogo</button>
+    </nav>
+
+    <section id="product-list" class="product-list" aria-live="polite"></section>
+  </main>
+
+  <div class="bottom-actions" aria-label="Acciones principales">
+    <button id="assistant-button" class="primary-action" type="button">
+      <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="5" y="7" width="14" height="11" rx="3"/><path d="M9 4h6M12 4v3M9 12h.01M15 12h.01M9 15h6"/></svg>
+      Pedir por voz
+    </button>
+    <button id="add-button" class="secondary-action" type="button">
+      <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      Añadir
+    </button>
+  </div>
+
+  <dialog id="assistant-dialog" class="sheet-dialog">
+    <div class="dialog-handle" aria-hidden="true"></div>
+    <header class="dialog-header">
+      <div>
+        <p class="eyebrow">Asistente inteligente</p>
+        <h2>Dime qué necesitas</h2>
+      </div>
+      <button class="icon-button dialog-close" type="button" aria-label="Cerrar">×</button>
+    </header>
+
+    <div id="assistant-history" class="assistant-history" aria-live="polite">
+      <div class="assistant-message assistant-reply">Puedo añadir, quitar, buscar o marcar productos como pedidos.</div>
+    </div>
+
+    <div class="examples" aria-label="Ejemplos">
+      <button type="button">Añade 3 kilos de almejas para Patio</button>
+      <button type="button">Marca el salmón como pedido</button>
+      <button type="button">Busca solomillo</button>
+    </div>
+
+    <form id="assistant-form" class="assistant-form">
+      <label class="sr-only" for="assistant-input">Instrucción para el asistente</label>
+      <input id="assistant-input" type="text" placeholder="Escribe o usa el micrófono…" autocomplete="off">
+      <button id="mic-button" class="mic-button" type="button" aria-label="Hablar">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6"/></svg>
+      </button>
+      <button class="send-button" type="submit" aria-label="Enviar">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m4 4 16 8-16 8 3-8-3-8Z"/><path d="M7 12h13"/></svg>
+      </button>
+    </form>
+    <button id="undo-button" class="text-button" type="button" hidden>Deshacer último cambio</button>
+  </dialog>
+
+  <dialog id="add-dialog" class="sheet-dialog compact-dialog">
+    <div class="dialog-handle" aria-hidden="true"></div>
+    <header class="dialog-header">
+      <div>
+        <p class="eyebrow">Lista semanal</p>
+        <h2>Añadir producto</h2>
+      </div>
+      <button class="icon-button dialog-close" type="button" aria-label="Cerrar">×</button>
+    </header>
+    <form id="add-form" class="add-form">
+      <label>Producto
+        <input id="add-product" name="product" list="product-suggestions" required placeholder="Ej. tomates">
+        <datalist id="product-suggestions"></datalist>
+      </label>
+      <div class="form-row">
+        <label>Cantidad
+          <input id="add-quantity" name="quantity" required value="1" placeholder="Ej. 2 kg">
+        </label>
+        <label>Restaurante
+          <select id="add-restaurant" name="restaurant" required></select>
+        </label>
+      </div>
+      <label>Categoría
+        <select id="add-category" name="category"></select>
+      </label>
+      <button class="submit-button" type="submit">Añadir a la lista</button>
+    </form>
+  </dialog>
+
+  <dialog id="manage-dialog" class="sheet-dialog compact-dialog">
+    <div class="dialog-handle" aria-hidden="true"></div>
+    <header class="dialog-header">
+      <div>
+        <p class="eyebrow">Opciones</p>
+        <h2>Gestionar la lista</h2>
+      </div>
+      <button class="icon-button dialog-close" type="button" aria-label="Cerrar">×</button>
+    </header>
+    <div class="manage-actions">
+      <button id="new-week-button" type="button">
+        <span><strong>Nueva semana</strong><small>Vacía cantidades y pedidos</small></span><span aria-hidden="true">›</span>
+      </button>
+      <button id="backup-button" type="button">
+        <span><strong>Guardar copia</strong><small>Descarga todos tus datos</small></span><span aria-hidden="true">›</span>
+      </button>
+      <label class="import-label">
+        <span><strong>Recuperar copia</strong><small>Importa un archivo guardado</small></span><span aria-hidden="true">›</span>
+        <input id="restore-input" type="file" accept="application/json,.json">
+      </label>
+      <button id="restore-excel-button" type="button">
+        <span><strong>Restaurar lista del Excel</strong><small>Vuelve al punto de partida</small></span><span aria-hidden="true">›</span>
+      </button>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="seed-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
